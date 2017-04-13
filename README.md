@@ -5,4 +5,5 @@ electron + react first app
 let get started!
 npm install -g gulp-cli
 
-
+to start app use:
+    grunt
