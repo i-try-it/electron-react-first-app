@@ -15,13 +15,23 @@ var MainInterface = React.createClass({
       myAppointments: loadApts
     }//return
   }, //getInitialState
+
+  componentDidUpdate: function() {
+    fs.writeFile(dataLocation, JSON.stringify(this.state.myAppointments), 'utf8', function(err) {
+      if (err) {
+        console.log(err);
+      }
+    });//writeFile
+  }, //componentDidUpdate
+
   deleteMessage: function(item) {
     var allApts = this.state.myAppointments;
     var newApts = _.without(allApts, item);
     this.setState({
       myAppointments: newApts
-    })
-  },
+    }); //setState
+  }, //deleteMessage
+
   render: function() {
     var myAppointments = this.state.myAppointments;
 
@@ -29,7 +39,7 @@ var MainInterface = React.createClass({
       return(
         <AptList key = {index}
           singleItem = {item}
-          whichItem = {item}
+          whichItem =  {item}
           onDelete = {this.deleteMessage}
         />
       ) // return
