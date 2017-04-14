@@ -11,27 +11,36 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var AptList = require('./AptList');
 var Toolbar = require('./Toolbar');
+var AddAppointment = require('./AddAppointment');
 
 var MainInterface = React.createClass({
-  getInitialState: function() {
+  getInitialState: function () {
     return {
+      aptBodyVisible: false,
       myAppointments: loadApts
     }//return
   }, //getInitialState
 
-  componentDidUpdate: function() {
-    fs.writeFile(dataLocation, JSON.stringify(this.state.myAppointments), 'utf8', function(err) {
+  componentDidUpdate: function () {
+    fs.writeFile(dataLocation, JSON.stringify(this.state.myAppointments), 'utf8', function (err) {
       if (err) {
         console.log(err);
       }
     });//writeFile
   }, //componentDidUpdate
 
-  showAbout: function() {
+  handleAptDisplay: function () {
+    var tempVisibility = !this.state.aptBodyVisible;
+    this.setState({
+      aptBodyVisible: tempVisibility
+    })
+  },
+
+  showAbout: function () {
     ipc.sendSync('openInfoWindow')
   },
 
-  deleteMessage: function(item) {
+  deleteMessage: function (item) {
     var allApts = this.state.myAppointments;
     var newApts = _.without(allApts, item);
     this.setState({
@@ -39,24 +48,32 @@ var MainInterface = React.createClass({
     }); //setState
   }, //deleteMessage
 
-  render: function() {
+  render: function () {
     var myAppointments = this.state.myAppointments;
-
-    myAppointments=myAppointments.map(function(item, index) {
-      return(
-        <AptList key = {index}
-          singleItem = {item}
-          whichItem =  {item}
-          onDelete = {this.deleteMessage}
-        />
+    if(this.state.aptBodyVisible === true) {
+      $('#addAppointment').modal('show'); //from the bootstrap
+    } else {
+      $('#addAppointment').modal('hide');
+    }
+    myAppointments = myAppointments.map(function (item, index) {
+      return (
+        <AptList key={index}
+          singleItem={item}
+          whichItem={item}
+          onDelete={this.deleteMessage}
+          />
       ) // return
     }.bind(this)); //Appointments.map
-    return(
+    return (
       <div className="application">
         <div className="interface">
           <Toolbar
-            handleAbout = {this.showAbout}
-          />
+            handleToggle={this.handleAptDisplay}
+            handleAbout={this.showAbout}
+            />
+          <AddAppointment
+            handleToggle={this.handleAptDisplay}
+            />
           <div className="container">
             <div className="row">
               <div className="appointments col-sm-12">
