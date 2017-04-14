@@ -29,4 +29,8 @@ app.on('ready', function() {
     event.returnValue='';
     infoWindow.hide();
   }); //closeInfoWindow
+  ipc.on('openInfoWindow', function(event, arg){
+    event.returnValue='';
+    infoWindow.show();
+  }); //closeInfoWindow
 }); //app is ready
