@@ -19,7 +19,9 @@ var MainInterface = React.createClass({
     return {
       aptBodyVisible: false,
       myAppointments: loadApts,
-      queryText: ''
+      queryText: '',
+      orderBy: 'petName',
+      orderDir: 'asc'
     }//return
   }, //getInitialState
 
@@ -57,6 +59,14 @@ var MainInterface = React.createClass({
       myAppointments: newApts
     }); //setState
   }, //deleteMessage
+
+  reOrder: function(orderBy, orderDirection) {
+    this.setState({
+      orderBy: orderBy,
+      orderDir: orderDirection
+    })
+  },
+
   searchApts: function(query) {
     this.setState({
       queryText: query
@@ -66,7 +76,10 @@ var MainInterface = React.createClass({
   render: function () {
     var filteredApts = [];
     var queryText = this.state.queryText;
+    var orderBy = this.state.orderBy;
+    var orderDir = this.state.orderDir;
     var myAppointments = this.state.myAppointments;
+
 
     if(this.state.aptBodyVisible === true) {
       $('#addAppointment').modal('show'); //from the bootstrap
@@ -84,6 +97,9 @@ var MainInterface = React.createClass({
         filteredApts.push(myAppointments[i]);
       }
     }
+    filteredApts = _.orderBy(filteredApts, function(item) {
+      return item[orderBy].toLowerCase();
+    }, orderDir);
     filteredApts = filteredApts.map(function (item, index) {
       return (
         <AptList key={index}
@@ -97,6 +113,10 @@ var MainInterface = React.createClass({
       <div className="application">
         <HeaderNav
           onSearch={this.searchApts}
+          orderBy={this.state.orderBy}
+          orderDir={this.state.orderDir}
+          onReorder={this.reOrder}
+
         />
         <div className="interface">
           <Toolbar
