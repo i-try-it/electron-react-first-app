@@ -25,6 +25,16 @@ var MainInterface = React.createClass({
     }//return
   }, //getInitialState
 
+  componentDidMount: function (event, message) {
+    ipc.on('addAppointment', function(){
+      this.handleAptDisplay();
+    }.bind(this));
+  },
+  componentWillUnmount: function () {
+    ipc.removeListener('addAppointment', function(){
+      this.handleAptDisplay();
+    }.bind(this));
+  },
   componentDidUpdate: function () {
     fs.writeFile(dataLocation, JSON.stringify(this.state.myAppointments), 'utf8', function (err) {
       if (err) {
